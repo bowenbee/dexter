@@ -28,14 +28,14 @@ Stay tuned for future capabilities and enhancements to the solution!
 1. An Office 365 License with PowerApps and SharePoint enabled
 2. Access to Power Apps as an **Environment Maker** in the target environment
 3. PowerShell Version 7 of Higher
-4. The **SharePoint PnP PowerShell** module installed, along with an authenticated connection (e.g., via `Connect-PnPOnline`) with appropriate Azure AD permissions to run the provisioning scripts (Needed for SharePoint List creation and data import from PokeAPI)
+4. The **SharePoint PnP PowerShell** module installed, along with an authenticated connection (e.g., via `Connect-PnPOnline`) with appropriate Azure AD permissions to run the provisioning scripts (Needed for SharePoint List creation and data import from PokeAPI). See [Register an Entra ID Application to use with PnP PowerShell](https://pnp.github.io/powershell/articles/registerapplication.html) for more information.
 5. **Edit access** to a target SharePoint site
 
 ## Setup Instructions
 
 ### 1. Provision the SharePoint Lists
 
-Go to the script [`sharepoint-provision/SharePointParams.ps1`](./sharepoint-provision/SharePointParams.ps1) and replace the SiteURL value with the site you want to use.
+In command line, cd into the folder [`sharepoint-provision`]. Locate the script [`sharepoint-provision/SharePointParams.ps1`](./sharepoint-provision/SharePointParams.ps1) and replace the SiteURL variable with your site. Also, update the client id with your app registration authorized to use SharePoint. 
 
 Next, run the [`sharepoint-provision/CreateLists.ps1`](./sharepoint-provision/CreateLists.ps1)
 
@@ -87,7 +87,7 @@ Note: If you are unable to use PnP PowerShell, the lists can also be created man
 
 ### 2. Import the Pokemon Data
 
-Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. Grab a coffee or go on a walk because this will take some time to run (the image upload part is slow) and took roughly 2.5 hours in total. It is a one-time run script once completed.
+Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. Grab lunch or go on a long walk because this will take some time to run (the image upload part is slow) and took roughly 2.5 hours in total. It is a one-time run script.
 
 ### 3. Import the Solution
 - Navigate to [make.powerapps.com](https://make.powerapps.com)
