@@ -8,7 +8,7 @@ function Get-SharePointParams {
     #>
 
     $params = [ordered]@{
-        SiteURL           = "https://powerfxhelp.sharepoint.com/sites/communication-site-test"
+        SiteURL           = "https://YOURSITE.sharepoint.com/sites/TEST"
         List_Pokemon      = "Pokemon"
         List_Region       = "Region"
         List_PokeDexEntry = "PokeDexEntry"

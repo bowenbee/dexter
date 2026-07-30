@@ -12,7 +12,7 @@ $ClientId = $SharePointParams.ClientId
 $SiteUrl = $SharePointParams.SiteURL
 
 $ExportFilePath = Join-Path $(Resolve-Path ..\data) -ChildPath "ListOfPokemon.csv"
-$SpriteFolderPath = "..\data\Sprites2"
+$SpriteFolderPath = "..\data\Sprites"
 
 if (!(Test-Path $SpriteFolderPath)) {
     New-Item -Path $SpriteFolderPath -ItemType Directory | Out-Null
@@ -279,6 +279,10 @@ foreach ($Pokemon in $PokemonList) {
         SpeciesID    = $(Split-Path $PkmnData.species.url -Leaf) -as [int]
     }
 
+    $Results += New-Object -TypeName psobject -Property $PokemonHash
+
+    # Filter the English Pokedex Entry for the Pokemon - add to hash for batch upload later
+
     $EnglishEntries = $Species.flavor_text_entries | Where-Object { $_.language.name -eq "en" }
     try {
 
@@ -296,9 +300,11 @@ foreach ($Pokemon in $PokemonList) {
     catch {
         Write-Warning "Failed to add item for $ProperName : $_"
     }
+
     $SpriteNormal = $null
     $ShinyFrontSprite  = $null
-    $Results += New-Object -TypeName psobject -Property $PokemonHash
+
+    # Add the Sprites for the Batch Uploading Later
 
     $SpriteHash = [ordered] @{
         ID = $PkmnData.id
