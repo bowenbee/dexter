@@ -95,4 +95,7 @@ Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint
 - Go to **Solutions** > **Import Solution**
 - Upload the unmanaged solution `.zip` file and follow the import wizard
 - When prompted, map the SharePoint site and list environment variables to the site and lists you created in Step 1
+
+![Preview](images/EnvironmentVariableImport.png)
+
 - Complete! Go to Apps and launch your shiny new app!
