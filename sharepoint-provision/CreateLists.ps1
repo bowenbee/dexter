@@ -64,10 +64,9 @@ Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "SpeciesID"    -
 Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "RegionID"     -DisplayName "RegionID"     -Type Number -AddToDefaultView
 Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "CaptureRate"  -DisplayName "CaptureRate"  -Type Number -AddToDefaultView
 Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "GrowthRate"   -DisplayName "GrowthRate"   -Type Text   -AddToDefaultView
-# Sprite = modern Image (Thumbnail) column
+Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "SpriteNormalURL" -DisplayName "SpriteNormalURL" -Type URL -AddToDefaultView
+Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "SpriteShinyURL" -DisplayName "SpriteShinyURL" -Type URL -AddToDefaultView
 
-Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "Sprite" -DisplayName "Sprite" -Type Thumbnail -AddToDefaultView
-Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "SpriteShiny" -DisplayName "SpriteShiny" -Type Thumbnail -AddToDefaultView
 # Lookup to Region list
 Add-PnPField -List $SharePointParams.List_Pokemon -InternalName "Region" -DisplayName "Region" -Type Lookup
 Set-PnPField -List $SharePointParams.List_Pokemon -Identity "Region" -Values @{

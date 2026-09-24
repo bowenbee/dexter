@@ -8,11 +8,11 @@ function Get-SharePointParams {
     #>
 
     $params = [ordered]@{
-        SiteURL           = "https://SITE.sharepoint.com/sites/test"
+        SiteURL           = ""
         List_Pokemon      = "Pokemon"
         List_Region       = "Region"
         List_PokeDexEntry = "PokeDexEntry"
-        List_Pokemon_Type = "PokemonType"
+        List_Pokemon_Type = "Pokemon_Type"
         ClientId = $Global:ClientID # Client Id used for PnP Authentication
     }
 

@@ -12,6 +12,7 @@ $ClientId = $SharePointParams.ClientId
 $SiteUrl = $SharePointParams.SiteURL
 
 $ExportFilePath = Join-Path $(Resolve-Path ..\data) -ChildPath "ListOfPokemon.csv"
+$PokedexExportFilePath = Join-Path $(Resolve-Path ..\data) -ChildPath "PokedexEntries.csv"
 $SpriteFolderPath = "..\data\Sprites"
 
 if (!(Test-Path $SpriteFolderPath)) {
@@ -107,7 +108,7 @@ Connect-PnPOnline $SiteUrl -Interactive -ClientId $ClientId
 # Bulk remove items from these lists (order matters if lookups reference each other)
 # ------------------------------------------------------------
 
-$ListsToClear = @($SP_Lists.Pokemon, $SP_Lists.Region, $SP_Lists.Pokemon_Type, $SP_Lists.PokeDexEntry)
+$ListsToClear = @($SP_Lists.Pokemon, $SP_Lists.Region, $SP_Lists.PokeDexEntry, $SP_Lists.Pokemon_Type)
 
 # First pass: gather item counts for every list so we can show one combined summary
 $ListItemsByName = @{}
@@ -191,6 +192,32 @@ Invoke-PnPBatch $BatchType
 # Import the Pokemon
 # ------------------------------------------------------------
 
+function Invoke-RestMethodWithRetry {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Uri,
+        [string]$Method = 'Get',
+        [int]$MaxRetries = 4,
+        [int]$DelaySeconds = 2
+    )
+
+    $attempt = 0
+    while ($true) {
+        $attempt++
+        try {
+            return Invoke-RestMethod -Method $Method -Uri $Uri
+        }
+        catch {
+            if ($attempt -ge $MaxRetries) {
+                Write-Error "Failed after $attempt attempts calling $Uri : $_"
+                throw
+            }
+            Write-Warning "Attempt $attempt failed for $Uri . Retrying in $DelaySeconds seconds..."
+            Start-Sleep -Seconds $DelaySeconds
+        }
+    }
+}
+
 $PokemonList = (Invoke-RestMethod -Method Get -Uri "$BaseUrl`?offset=$Offset&limit=$Limit").results
 
 $Results = @()
@@ -202,7 +229,7 @@ $SpritesResults  = @()
 foreach ($Pokemon in $PokemonList) {
 
     Write-Host "Gathering data on $($Pokemon.name): $($Pokemon.url)" -ForegroundColor Cyan
-    $PkmnData = Invoke-RestMethod -Method Get $Pokemon.url
+    $PkmnData = Invoke-RestMethodWithRetry -Uri $Pokemon.url
     $SpriteNormal = $PkmnData.sprites.front_default
     $ShinyFrontSprite = $PkmnData.sprites.front_shiny 
 
@@ -234,9 +261,10 @@ foreach ($Pokemon in $PokemonList) {
         
     }
 
-    $Species = Invoke-RestMethod -Method Get -Uri $PkmnData.species.url
-    $Generation = Invoke-RestMethod $Species.generation.url
-    Start-Sleep -Seconds 1
+    $Species    = Invoke-RestMethodWithRetry -Uri $PkmnData.species.url
+    $Generation = Invoke-RestMethodWithRetry -Uri $Species.generation.url
+
+    Start-Sleep -Seconds 2
     $Pounds = Convert-HectogramsToPounds -Hectograms $PkmnData.weight
 
     $PkmnName = $PkmnData.name
@@ -252,6 +280,8 @@ foreach ($Pokemon in $PokemonList) {
     $Color = Get-ProperCase -Text $Species.color.name
     $Type1 = Get-ProperCase -Text $PkmnData.types[0].type.name
     $Type2 = Get-ProperCase -Text $PkmnData.types[1].type.name
+    $SpriteNormalURL = $SpriteNormal
+    $SpriteShinyURL = $ShinyFrontSprite
     $CaptureRate = $Species.capture_rate
     $GrowthRate = $Species.growth_rate.name
     $JapaneseName = ($Species.names | Where-Object { $_.language.name -eq "ja" }).Name
@@ -276,6 +306,8 @@ foreach ($Pokemon in $PokemonList) {
         FrenchName   = $FrenchName
         Type1        = $Type1
         Type2        = $Type2
+        SpriteNormalURL = $SpriteNormalURL
+        SpriteShinyURL  = $SpriteShinyURL
         SpeciesID    = $(Split-Path $PkmnData.species.url -Leaf) -as [int]
     }
 
@@ -350,24 +382,7 @@ Foreach ($DexEntry in $PokdexResults){
 
 Invoke-PnPBatch $PokedexBatch
 
-# Upload the Sprites
-
-Foreach ($PokemonEntry in $PokemonEntries){
-    
-    $SpriteRecord = $SpritesResults | Where-Object {$_.ID -eq $PokemonEntry.FieldValues.PokedexID} | Select-Object -First 1
-    
-    If($null -ne $SpriteRecord.Normal){
-
-        Write-Host "Uploading Sprites for $($PokemonEntry.FieldValues.PokedexID) - $($PokemonEntry.FieldValues.Title)"
-
-        Set-PnPImageListItemColumn -List $SP_Lists.Pokemon -Identity $PokemonEntry.Id -Field "Sprite" -Path $SpriteRecord.Normal | Out-Null
-    }
-
-    If($null -ne $SpriteRecord.Shiny){
-
-        Set-PnPImageListItemColumn -List $SP_Lists.Pokemon -Identity $PokemonEntry.Id -Field "SpriteShiny" -Path $SpriteRecord.Shiny | Out-Null
-    }
-
-}
+# Export the results to CSV files
 
 $Results | Export-Csv $ExportFilePath -NoTypeInformation
+$PokdexResults | Export-Csv $PokedexExportFilePath -NoTypeInformation
