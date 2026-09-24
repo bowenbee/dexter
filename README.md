@@ -58,10 +58,10 @@ Note: If you are unable to use PnP PowerShell, the lists can also be created man
 | SpeciesID     | SpeciesID     | FALSE    | Number    |
 | Region        | Region        | FALSE    | Lookup    |
 | RegionID      | RegionID      | FALSE    | Number    |
-| Sprite        | Sprite        | FALSE    | Thumbnail |
+| SpriteNormalURL       | SpriteNormalURL        | FALSE    | URL |
 | CaptureRate   | CaptureRate   | FALSE    | Number    |
 | GrowthRate    | GrowthRate    | FALSE    | Text      |
-| SpriteShiny   | SpriteShiny   | FALSE    | Thumbnail |
+| SpriteShinyURL  | SpriteShinyURL   | FALSE    | URL |
 
 #### PokeDexEntry
 
@@ -87,7 +87,7 @@ Note: If you are unable to use PnP PowerShell, the lists can also be created man
 
 ### 2. Import the Pokemon Data
 
-Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. Grab lunch or go on a long walk because this will take some time to run (the image upload part is slow) and took roughly 2.5 hours in total. It is a one-time run script.
+Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. It is a one-time run script.
 
 ### 3. Import the Solution
 - Navigate to [make.powerapps.com](https://make.powerapps.com)
