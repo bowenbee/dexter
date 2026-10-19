@@ -1,6 +1,6 @@
 ﻿<#
 Adds the Pokemon from the PokeAPI to the SharePoint List
-Downloads the Pokemone's Sprites to a local folder and uploads to Pokemon's Record
+Stores each Pokemon's sprite image URLs (SpriteNormalURL / SpriteShinyURL) from the PokeAPI; no images are downloaded
 Change the $Limit variable to how many Pokemon you want to fetch
 #>
 $ErrorActionPreference = 'stop'
@@ -13,18 +13,6 @@ $SiteUrl = $SharePointParams.SiteURL
 
 $ExportFilePath = Join-Path $(Resolve-Path ..\data) -ChildPath "ListOfPokemon.csv"
 $PokedexExportFilePath = Join-Path $(Resolve-Path ..\data) -ChildPath "PokedexEntries.csv"
-$SpriteFolderPath = "..\data\Sprites"
-
-if (!(Test-Path $SpriteFolderPath)) {
-    New-Item -Path $SpriteFolderPath -ItemType Directory | Out-Null
-}
-
-$SpriteFolder = $(Resolve-Path $SpriteFolderPath).Path
-$ShinySpriteFolder = Join-Path $SpriteFolder -ChildPath "shiny"
-
-if (!(Test-Path $ShinySpriteFolder)) {
-    New-Item -Path $ShinySpriteFolder -ItemType Directory | Out-Null
-}
 
 $BaseUrl = "https://pokeapi.co/api/v2/pokemon/"
 $Limit = 1400
@@ -54,38 +42,6 @@ function Get-ProperCase {
         }
         return (Get-Culture).TextInfo.ToTitleCase($Text.ToLower())
     }
-}
-
-function Get-ImageWithRetry {
-    param(
-        [string]$Uri,
-        [string]$OutFile,
-        [int]$MaxRetries = 5
-    )
-
-    $attempt = 0
-    while ($attempt -lt $MaxRetries) {
-        try {
-            Invoke-WebRequest -Uri $Uri -OutFile $OutFile -ErrorAction Stop
-            return $true
-        }
-        catch {
-            $response = $_.Exception.Response
-            if ($response -and [int]$response.StatusCode -eq 429) {
-                $retryAfter = $response.Headers["Retry-After"]
-                $wait = if ($retryAfter) { [int]$retryAfter } else { [math]::Pow(2, $attempt) }
-                Write-Warning "429 hit for $Uri. Waiting $wait seconds..."
-                Start-Sleep -Seconds $wait
-                $attempt++
-            }
-            else {
-                Write-Warning "Failed to download $Uri : $_"
-                return $false
-            }
-        }
-    }
-    Write-Warning "Max retries exceeded for $Uri"
-    return $false
 }
 
 function Convert-HectogramsToPounds {
@@ -224,44 +180,15 @@ $Results = @()
 $PokedexBatch = New-PnPBatch
 $PokemonBatchCreate = New-PnPBatch
 $PokdexResults=  @()
-$SpritesResults  = @()
 
 foreach ($Pokemon in $PokemonList) {
 
     Write-Host "Gathering data on $($Pokemon.name): $($Pokemon.url)" -ForegroundColor Cyan
     $PkmnData = Invoke-RestMethodWithRetry -Uri $Pokemon.url
     $SpriteNormal = $PkmnData.sprites.front_default
-    $ShinyFrontSprite = $PkmnData.sprites.front_shiny 
+    $ShinyFrontSprite = $PkmnData.sprites.front_shiny
 
-    If($null -ne $SpriteNormal){
-
-        $SpriteNormalPath = $(Join-Path -Path $SpriteFolder -ChildPath $(Split-Path $SpriteNormal -Leaf))
-        $LocalSpriteFound = Test-Path $SpriteNormalPath
-
-        If(!$LocalSpriteFound){
-
-            Get-ImageWithRetry -Uri $SpriteNormal -OutFile $SpriteNormalPath | out-null
-            Start-Sleep -Seconds 0.2
-
-        }
-
-    }
-
-    If($null -ne $ShinyFrontSprite){
-        $NewShinyFileName = "shiny-" + $(Split-Path -Path $ShinyFrontSprite -Leaf)
-        $SpriteShinyPath = $(Join-Path -Path $ShinySpriteFolder -ChildPath $NewShinyFileName)
-        $LocalShinySpriteFound = Test-Path $SpriteShinyPath
-
-        If(!$LocalShinySpriteFound){
-
-            Get-ImageWithRetry -Uri $ShinyFrontSprite -OutFile $SpriteShinyPath | out-null
-            Start-Sleep -Seconds 0.2
-
-        }
-        
-    }
-
-    $Species    = Invoke-RestMethodWithRetry -Uri $PkmnData.species.url
+    $Species   = Invoke-RestMethodWithRetry -Uri $PkmnData.species.url
     $Generation = Invoke-RestMethodWithRetry -Uri $Species.generation.url
 
     Start-Sleep -Seconds 2
@@ -335,16 +262,6 @@ foreach ($Pokemon in $PokemonList) {
 
     $SpriteNormal = $null
     $ShinyFrontSprite  = $null
-
-    # Add the Sprites for the Batch Uploading Later
-
-    $SpriteHash = [ordered] @{
-        ID = $PkmnData.id
-        Normal =  $SpriteNormalPath
-        Shiny = $SpriteShinyPath 
-    }
-
-    $SpritesResults += New-Object -TypeName psobject -Property $SpriteHash
 }
 
 # Send Batch Pokedex Data
