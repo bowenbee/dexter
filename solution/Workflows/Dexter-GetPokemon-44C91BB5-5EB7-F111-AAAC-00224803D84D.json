@@ -1,0 +1,126 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline_1": {
+        "runtimeSource": "invoker",
+        "connection": {
+          "connectionReferenceLogicalName": "pwrsol_sharedsharepointonline_5c353"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "PDex SP Site (pwrsol_PDexSPSite)": {
+          "defaultValue": "https://powerfxhelp.sharepoint.com/sites/powerfxhelp",
+          "type": "String",
+          "metadata": {
+            "schemaName": "pwrsol_PDexSPSite"
+          }
+        },
+        "PDex SP List - Pokemon (pwrsol_PDexSPListPokemon)": {
+          "defaultValue": "6eb2678d-fc35-4352-a323-1d28ccfc0a34",
+          "type": "String",
+          "metadata": {
+            "schemaName": "pwrsol_PDexSPListPokemon"
+          }
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "45f09a3a-e004-4503-b9ae-fd800e23f011"
+          },
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Send_an_HTTP_request_to_SharePoint": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "1fc4c484-8680-4d6c-840f-fa21794a3c9c"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "HttpRequest",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('PDex SP Site (pwrsol_PDexSPSite)')",
+              "parameters/method": "GET",
+              "parameters/uri": "_api/web/lists(guid'@{parameters('PDex SP List - Pokemon (pwrsol_PDexSPListPokemon)')}')/items?$select=ID,PokedexID,Title,SpeciesID,EnglishName,SpriteNormalURL,FrenchName,JapaneseName,CaptureRate,GrowthRate,HeightInches,WeightLbs,SpriteShinyURL,Type1,Type2,Region/Title&$expand=Region&$orderby=PokedexID&$top=5000",
+              "parameters/headers": {
+                "Accept": "application/json; odata=nometadata"
+              }
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Compose": {
+          "runAfter": {
+            "Send_an_HTTP_request_to_SharePoint": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0db4ea6a-de5e-43c8-870c-c24ac3b4174e"
+          },
+          "type": "Compose",
+          "inputs": "@body('Send_an_HTTP_request_to_SharePoint')?['value']"
+        },
+        "Respond_to_a_Power_App_or_flow": {
+          "runAfter": {
+            "Compose": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "487db293-363e-46a4-85e6-51366e3269ce"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "data": "@{outputs('Compose')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "title": "data",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

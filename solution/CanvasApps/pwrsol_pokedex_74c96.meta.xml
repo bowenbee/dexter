@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CanvasApp xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>pwrsol_pokedex_74c96</Name>
+  <AppVersion>2026-09-25T23:22:33Z</AppVersion>
+  <Status>Ready</Status>
+  <CreatedByClientVersion>3.26091.11.0</CreatedByClientVersion>
+  <MinClientVersion>3.26091.11.0</MinClientVersion>
+  <Tags>{"primaryDeviceWidth":"1366","primaryDeviceHeight":"768","supportsPortrait":"true","supportsLandscape":"true","primaryFormFactor":"Tablet","showStatusBar":"false","publisherVersion":"3.26091.11","minimumRequiredApiVersion":"2.2.0","hasComponent":"true","hasUnlockedComponent":"true","isUnifiedRootApp":"false","m365CopilotSettingValue":"0","sienaVersion":"20260920T180328Z-3.26085.11.0"}</Tags>
+  <IsCdsUpgraded>0</IsCdsUpgraded>
+  <GalleryItemId xsi:nil="true"></GalleryItemId>
+  <BackgroundColor>rgba(255, 255, 255, 1)</BackgroundColor>
+  <DisplayName>Dexter</DisplayName>
+  <Description xsi:nil="true"></Description>
+  <CommitMessage xsi:nil="true"></CommitMessage>
+  <Publisher xsi:nil="true"></Publisher>
+  <AuthorizationReferences>[]</AuthorizationReferences>
+  <ConnectionReferences>{"3a764559-939a-431a-9924-f703058b47f5":{"id":"/providers/microsoft.powerapps/apis/shared_logicflows","displayName":"Logic flows","iconUri":"https://static.powerapps.com/resource/ppcr/releases/v1.0.1827/1.0.1827.4908/logicflows/icon.png","dataSources":["Dexter-GetPokemon"],"dependencies":["7e41720b-25d9-4bbb-895b-bfa6f127f40f"],"dependents":[],"parameterHints":{"workflowName":{"value":"f7cce8f2-842a-42f5-ae63-da921c975160"},"workflowEntityId":{"value":"44c91bb5-5eb7-f111-aaac-00224803d84d"},"workflowDisplayName":{"value":"Dexter - Get Pokemon"},"7e41720b-25d9-4bbb-895b-bfa6f127f40f":{"value":"shared_sharepointonline_1"}},"parameterHintsV2":{"workflowName":{"value":"f7cce8f2-842a-42f5-ae63-da921c975160"},"workflowEntityId":{"value":"44c91bb5-5eb7-f111-aaac-00224803d84d"},"workflowDisplayName":{"value":"Dexter - Get Pokemon"},"shared_sharepointonline_1":{"value":"7e41720b-25d9-4bbb-895b-bfa6f127f40f"}},"isOnPremiseConnection":false,"bypassConsent":false,"dataSets":{},"apiTier":"Standard","actions":["Run"]},"7e41720b-25d9-4bbb-895b-bfa6f127f40f":{"id":"/providers/microsoft.powerapps/apis/shared_sharepointonline","displayName":"SharePoint","iconUri":"https://static.powerapps.com/resource/ppcr/releases/v1.0.1827/1.0.1827.4913/sharepointonline/icon.png","dataSources":["PDex SP List - Pokedex Entry","PDex SP List - Region"],"dependencies":[],"dependents":["3a764559-939a-431a-9924-f703058b47f5"],"parameterHints":{},"parameterHintsV2":{},"isOnPremiseConnection":false,"bypassConsent":false,"dataSets":{"https://powerfxhelp.sharepoint.com/sites/powerfxhelp_pwrsol_PDexSPSite":{"datasetOverride":{"name":"https://powerfxhelp.sharepoint.com/sites/powerfxhelp","environmentVariableName":"pwrsol_PDexSPSite"},"dataSources":{"PDex SP List - Pokedex Entry":{"tableName":"2cd8b341-ce47-4eb6-ac64-82f70da46ae0","tableNameOverride":{"name":"2cd8b341-ce47-4eb6-ac64-82f70da46ae0","environmentVariableName":"pwrsol_PDexSPListPokedexEntry"}},"PDex SP List - Region":{"tableName":"ab1b16f7-e0e7-4f22-8068-f282d39b549c","tableNameOverride":{"name":"ab1b16f7-e0e7-4f22-8068-f282d39b549c","environmentVariableName":"pwrsol_PDexSPListRegion"}}}}},"apiTier":"Standard","actions":["providers/PowerPlatform.Governance/Operations/Read"]}}</ConnectionReferences>
+  <DatabaseReferences>{}</DatabaseReferences>
+  <AppComponents>[]</AppComponents>
+  <AppComponentDependencies>[]</AppComponentDependencies>
+  <CanConsumeAppPass>1</CanConsumeAppPass>
+  <CanvasAppType>0</CanvasAppType>
+  <BypassConsent>0</BypassConsent>
+  <AdminControlBypassConsent>0</AdminControlBypassConsent>
+  <EmbeddedApp xsi:nil="true"></EmbeddedApp>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <CdsDependencies>{"cdsdependencies":[{"dependencyid":"44c91bb5-5eb7-f111-aaac-00224803d84d","componenttype":29,"componenttypeplatformname":"Workflow"},{"logicalname":"pwrsol_PDexSPSite","componenttype":380,"componenttypeplatformname":"EnvironmentVariableDefinition"},{"logicalname":"pwrsol_PDexSPListPokedexEntry","componenttype":380,"componenttypeplatformname":"EnvironmentVariableDefinition"},{"logicalname":"pwrsol_PDexSPListRegion","componenttype":380,"componenttypeplatformname":"EnvironmentVariableDefinition"}]}</CdsDependencies>
+  <IsCustomizable>1</IsCustomizable>
+  <BackgroundImageUri>/CanvasApps/pwrsol_pokedex_74c96_BackgroundImageUri</BackgroundImageUri>
+  <DocumentUri>/CanvasApps/pwrsol_pokedex_74c96_DocumentUri.msapp</DocumentUri>
+  <AdditionalUris>
+    <AdditionalUri>/CanvasApps/pwrsol_pokedex_74c96_AdditionalUris0_identity.json</AdditionalUri>
+  </AdditionalUris>
+</CanvasApp>
