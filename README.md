@@ -35,7 +35,12 @@ Stay tuned for future capabilities and enhancements to the solution!
 
 ### 1. Provision the SharePoint Lists
 
-In command line, cd into the folder [`sharepoint-provision`]. Locate the script [`sharepoint-provision/SharePointParams.ps1`](./sharepoint-provision/SharePointParams.ps1) and replace the SiteURL variable with your site. Also, update the client id with your app registration authorized to use SharePoint. 
+In command line, cd into the folder [`sharepoint-provision`]. Locate the script [`sharepoint-provision/SharePointParams.ps1`](./sharepoint-provision/SharePointParams.ps1) and replace the SiteURL variable with your site. The client id isn't stored in the script. Set it in your PowerShell session first, using the client id of your app registration authorized to use SharePoint:
+
+```powershell
+$Global:ClientID = "<your app registration client id>"
+```
+
 
 Next, run the [`sharepoint-provision/CreateLists.ps1`](./sharepoint-provision/CreateLists.ps1)
 
@@ -87,13 +92,18 @@ Note: If you are unable to use PnP PowerShell, the lists can also be created man
 
 ### 2. Import the Pokemon Data
 
-Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. It is a one-time run script.
+Using the PowerShell script [`sharepoint-provision/ImportPkmn.ps1`](./sharepoint-provision/ImportPkmn.ps1), import the Pokemon data into the lists. It is a one-time run script. Set `$Global:ClientID` as in step 1 first.
+
+- If the lists already contain items, the script lists them and asks you to type `y` before deleting them and loading fresh data.
+- It fetches 1,400 Pokemon from the [PokeAPI](https://pokeapi.co/) with a short pause between each to respect rate limits, so expect it to take about 45 minutes.
+- Sprites aren't downloaded. Each Pokemon's record stores the PokeAPI image URLs, and the app loads them from there.
+- It also writes `data/ListOfPokemon.csv` and `data/PokedexEntries.csv` as a record of what was imported.
 
 ### 3. Import the Solution
 - Navigate to [make.powerapps.com](https://make.powerapps.com)
 - Select the target environment
 - Go to **Solutions** > **Import Solution**
-- Upload the unmanaged solution `.zip` file and follow the import wizard
+- Upload the solution `.zip` from [`releases/`](./releases/) and follow the import wizard. Files are named with the solution version, e.g. `Dexter_1_0_0_1.zip` (unmanaged) and `Dexter_1_0_0_1_managed.zip` (managed). Use unmanaged if you want to edit the app, or managed for a read-only install in a downstream environment.
 - When prompted, map the SharePoint site and list environment variables to the site and lists you created in Step 1
 
 ![Preview](images/EnvironmentVariableImport.png)
